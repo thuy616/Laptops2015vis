@@ -1,57 +1,4 @@
-
-
-function draw() {
-
-	// load data
-	$.getJSON( "data.json", function(data) {
-		// load checkboxes
-		// console.log(data);
-		for (var i = 0; i<data.length; i++) {
-			
-			// create label element
-			// create input element
-			var $div = $("<div>", {class: "checkbox"});
-			var $label = $("<label>");
-
-			var $checkbox = $("<input>", {type: "checkbox"});
-			
-			$checkbox.attr("id", i);
-			//default first item is checked
-			// if (i == 0) {
-			 	$checkbox.attr("checked", "checked");
-			// }
-			
-			$label.append($checkbox);
-			$label.append(data[i].name);
-			
-			$div.append($label)
-			$("#checkboxes").append($div);
-		}
-
-		$("input:checkbox").click(redraw(data));
-	});
-
-	
-}
-
-function visualizeData(radarChartData) {
-	console.log("drawing");
-	window.myRadar = new Chart(document.getElementById("canvas").getContext("2d")).Radar(radarChartData, {
-            responsive: true
-    });
-    //TODO: custom tooltips
-    //Display details of selected laptop in a table
-}
-
-function redraw(laptops) {
-
-	
-	// get selected data
-	console.log("checkbox clicked");
-	var selectedIds = $('input:checkbox:checked').map(function(){ return $(this).attr("id");}).get();
-	console.log(selectedIds);
-	var labels = ["Processor Speed", "RAM", "Storage", "Price", "Graphics", "Battery", "Weight"];
-	var colors = [
+var colors = [
 		[101, 194, 165],
 		[252, 141, 98],
 		[142, 159, 203],
@@ -63,12 +10,66 @@ function redraw(laptops) {
 		[93, 188, 210],
 		[205, 213, 213]
 	];
+
+function draw() {
+
+
+	// load data
+	$.getJSON( "data.json", function(data) {
+		// load checkboxes
+		for (var i = 0; i<data.length; i++) {
+			
+			// create label element
+			// create input element
+			var $div = $("<div>", {class: "checkbox"});
+			var $label = $("<label>");
+
+			var $checkbox = $("<input>", {type: "checkbox"});
+			
+			$checkbox.attr("id", i);
+			
+			$label.append($checkbox);
+			$label.append(data[i].name);
+			$label.attr("style", "background:" + getRgbaColor(colors[i], 0.5))
+			
+			$div.append($label)
+			$("#checkboxes").append($div);
+		}
+
+		// redraw everytime selected data is changed
+		$("input:checkbox").click(function() {
+			console.log("must go here");
+			var selectedIds = $('input:checkbox:checked').map(function(){ return $(this).attr("id");}).get();
+			console.log(selectedIds);
+			redraw(selectedIds, data);
+		});
+	});
+}
+
+function visualizeData(radarChartData) {
+	console.log("drawing");
+	window.myRadar = new Chart(document.getElementById("canvas").getContext("2d")).Radar(radarChartData, {
+            responsive: true,
+            scaleOverride: true,
+		    scaleSteps: 5,
+		    scaleStepWidth: 1,
+		    scaleStartValue: 0
+    });
+    //TODO: custom tooltips
+    //Display details of selected laptop in a table
+}
+
+function redraw(selectedIds, laptops) {
+
+	var labels = ["Processor Speed", "RAM", "Storage", "Price", "Graphics", "Battery", "Weight"];
+	
 	var radarChartData = new Object();
 	radarChartData.labels = labels;
 	radarChartData.datasets = [];
 
 	for (var i in selectedIds) {
-		var index = parseInt(i);
+		var index = parseInt(selectedIds[i]);
+		console.log("index: " + index);
 
 		selectedLaptop = laptops[index];
 		// calculate Score of selected Laptop
