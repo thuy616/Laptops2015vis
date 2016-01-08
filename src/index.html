@@ -9,10 +9,12 @@
 
         <link rel="apple-touch-icon" href="apple-touch-icon.png">
         <!-- Place favicon.ico in the root directory -->
-
+        <link rel="stylesheet" href="css/bootstrap.min.css">
         <link rel="stylesheet" href="css/normalize.css">
         <link rel="stylesheet" href="css/main.css">
         <script src="js/vendor/modernizr-2.8.3.min.js"></script>
+        <script src="js/vendor/chart.min.js"></script>
+        <script src="drawChart.js"></script>
     </head>
     <body>
         <!--[if lt IE 8]>
@@ -20,9 +22,56 @@
         <![endif]-->
 
         <!-- Add your site or application content here -->
+        <h1>Which Laptop should you buy?</h1>
+        <h2>January 2016</h2>
+        <p>Some description here</p>
         <p>Hello world! This is HTML5 Boilerplate.</p>
+        <div class="row">
+            <div id="legend" class="col-sm-4">
+                <div class="form-group">
+                    <div id="checkboxes" class="col-sm-offset-2 col-sm-10">
+                     
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4 col-sm-offset-2">
+                <p>Chart here</p>
+                <canvas style="width:80%" id="canvas" height="450" width="450"></canvas>
+            </div>
+        <div>
 
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/{{JQUERY_VERSION}}/jquery.min.js"></script>
+        <script type="text/javascript">
+            var radarChartData = {
+        labels: ["Eating", "Drinking", "Sleeping", "Designing", "Coding", "Cycling", "Running"],
+        datasets: [
+            {
+                label: "My First dataset",
+                fillColor: "rgba(220,220,220,0.2)",
+                strokeColor: "rgba(220,220,220,1)",
+                pointColor: "rgba(220,220,220,1)",
+                pointStrokeColor: "#fff",
+                pointHighlightFill: "#fff",
+                pointHighlightStroke: "rgba(220,220,220,1)",
+                data: [65,59,90,81,56,55,40]
+            },
+            {
+                label: "My Second dataset",
+                fillColor: "rgba(151,187,205,0.2)",
+                strokeColor: "rgba(151,187,205,1)",
+                pointColor: "rgba(151,187,205,1)",
+                pointStrokeColor: "#fff",
+                pointHighlightFill: "#fff",
+                pointHighlightStroke: "rgba(151,187,205,1)",
+                data: [28,48,40,19,96,27,100]
+            }
+        ]
+    };
+    window.onload = function(){
+        draw();
+    }
+        </script>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
         <script>window.jQuery || document.write('<script src="js/vendor/jquery-{{JQUERY_VERSION}}.min.js"><\/script>')</script>
         <script src="js/plugins.js"></script>
         <script src="js/main.js"></script>
