@@ -17,9 +17,9 @@ function draw() {
 			
 			$checkbox.attr("id", i);
 			//default first item is checked
-			if (i == 0) {
-				$checkbox.attr("checked", "checked");
-			}
+			// if (i == 0) {
+			 	$checkbox.attr("checked", "checked");
+			// }
 			
 			$label.append($checkbox);
 			$label.append(data[i].name);
@@ -34,20 +34,22 @@ function draw() {
 	
 }
 
-
-function calculateScores() {
-
-}
-
 function visualizeData(radarChartData) {
 	console.log("drawing");
 	window.myRadar = new Chart(document.getElementById("canvas").getContext("2d")).Radar(radarChartData, {
             responsive: true
-        });
+    });
+    //TODO: custom tooltips
+    //Display details of selected laptop in a table
 }
 
 function redraw(laptops) {
 
+	
+	// get selected data
+	console.log("checkbox clicked");
+	var selectedIds = $('input:checkbox:checked').map(function(){ return $(this).attr("id");}).get();
+	console.log(selectedIds);
 	var labels = ["Processor Speed", "RAM", "Storage", "Price", "Graphics", "Battery", "Weight"];
 	var colors = [
 		[101, 194, 165],
@@ -61,11 +63,6 @@ function redraw(laptops) {
 		[93, 188, 210],
 		[205, 213, 213]
 	];
-	// get selected data
-	console.log("checkbox clicked");
-	var selectedIds = $('input:checkbox:checked').map(function(){ return $(this).attr("id");}).get();
-	console.log(selectedIds);
-	
 	var radarChartData = new Object();
 	radarChartData.labels = labels;
 	radarChartData.datasets = [];
@@ -95,14 +92,12 @@ function redraw(laptops) {
 			getWeightScore(selectedLaptop.weight)
 		];
 		radarChartData.datasets.push(selectedData);
-		
+
 	}
 
-	console.log("radarChartData");
-	console.log(radarChartData);
-
-	visualizeData(radarChartData);
-
+	if (radarChartData.datasets.length > 0) {
+		visualizeData(radarChartData);
+	}
 }
 
 function getProcessorScore(speed) {
@@ -180,7 +175,7 @@ function getGraphicsScore(graphicsType) {
 function getBatteryScore(batt) {
 	if (batt.hrs >= 10) {
 		return 5;
-	} else if (barr.hrs >= 7) {
+	} else if (batt.hrs >= 7) {
 		return 4;
 	} else if (batt.hrs >= 5) {
 		return 3;
@@ -190,7 +185,7 @@ function getBatteryScore(batt) {
 }
 
 function getWeightScore(weight) {
-	return 5 - weight.value;
+	return 7 - weight.value;
 }
 
 function getRgbaColor(rgbArray, transparency) {
