@@ -27,6 +27,7 @@ function draw() {
 			var $checkbox = $("<input>", {type: "checkbox"});
 			
 			$checkbox.attr("id", i);
+			$checkbox.attr("checked", "checked");
 			
 			$label.append($checkbox);
 			$label.append(data[i].name);
@@ -35,6 +36,9 @@ function draw() {
 			$div.append($label)
 			$("#checkboxes").append($div);
 		}
+
+		var defaultAll = $('input:checkbox:checked').map(function(){ return $(this).attr("id");}).get();
+		redraw(defaultAll, data)
 
 		// redraw everytime selected data is changed
 		$("input:checkbox").click(function() {
@@ -186,7 +190,7 @@ function getBatteryScore(batt) {
 }
 
 function getWeightScore(weight) {
-	return 7 - weight.value;
+	return (10 - weight.value)/2 + 1;
 }
 
 function getRgbaColor(rgbArray, transparency) {
