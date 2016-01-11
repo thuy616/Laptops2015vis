@@ -24,21 +24,28 @@
         <!-- Add your site or application content here -->
         <h1 class="text-center">Which Laptop should you buy?</h1>
         <p class="text-center">January 2016. Source: pcmag</p>
-        <div class="row">
-            <div id="legend" class="col-sm-6">
-                <div class="form-group">
-                    <div id="checkboxes" class="col-sm-offset-4 col-sm-8">
-                     
+        <div class="main" ng-controller="MainController">
+
+            <div class="row">
+                <div id="legend" class="col-sm-6">
+                    <div class="form-group">
+                        <div id="checkboxes" class="col-sm-offset-4 col-sm-8">
+
+                            <div class="checkbox" ng-repeat="laptop in laptops track by $index">
+                                <label>
+                                    <input type="checkbox">{{laptop.name}}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div id="canvas-holder" class="col-xs-8">
+                        <canvas style="width:50%" id="canvas" height="300" width="300"></canvas>
                     </div>
                 </div>
             </div>
-            <div class="col-sm-6">
-                <div id="canvas-holder" class="col-xs-8">
-                    <canvas style="width:50%" id="canvas" height="300" width="300"></canvas>
-                </div>
-            </div>
-        <div>
-
+        </div>
         
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>

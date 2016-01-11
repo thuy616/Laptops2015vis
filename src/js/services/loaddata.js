@@ -1,4 +1,4 @@
-app.factory('forecast', ['$http', function($http) { 
+app.factory('laptops', ['$http', function($http) { 
   return $http.get('../../data.json') 
             .success(function(data) { 
               return data; 
