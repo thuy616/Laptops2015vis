@@ -18,36 +18,127 @@ function draw() {
 	$.getJSON( "data.json", function(data) {
 		// load checkboxes
 		for (var i = 0; i<data.length; i++) {
-			
+
 			// create label element
 			// create input element
 			var $div = $("<div>", {class: "checkbox"});
 			var $label = $("<label>");
 
 			var $checkbox = $("<input>", {type: "checkbox"});
-			
+
 			$checkbox.attr("id", i);
 			$checkbox.attr("checked", "checked");
-			
+
 			$label.append($checkbox);
 			$label.append(data[i].name);
 			$label.attr("style", "background:" + getRgbaColor(colors[i], 0.5))
-			
+
 			$div.append($label)
 			$("#checkboxes").append($div);
 		}
 
 		var defaultAll = $('input:checkbox:checked').map(function(){ return $(this).attr("id");}).get();
 		redraw(defaultAll, data)
+        loadDetailedTable(defaultAll, data)
 
 		// redraw everytime selected data is changed
 		$("input:checkbox").click(function() {
-			console.log("must go here");
+            if ($(this).attr("id") == "check-all") {
+                var all = $(this);
+                $('input:checkbox').each(function() {
+                    $(this).prop("checked", all.prop("checked"));
+                });
+            }
 			var selectedIds = $('input:checkbox:checked').map(function(){ return $(this).attr("id");}).get();
-			console.log(selectedIds);
+			//console.log(selectedIds);
 			redraw(selectedIds, data);
+            reloadDetailedTable(selectedIds, data)
 		});
 	});
+}
+
+function loadDetailedTable(selectedIds, data) {
+    var displayData = [];
+    for (var i=0; i<selectedIds.length; i++) {
+        if (selectedIds[i] != "check-all") {
+            var index = parseInt(selectedIds[i]);
+
+            var entry = data[index];
+            var displayObj = [
+                "<a href=\"" + entry.reviewUrl + "\">" + entry.name + "</a> ",
+                entry.processorName,
+                entry.processorSpeed + " GHz",
+                entry.platform,
+                entry.ram,
+                entry.storage.type + " " + entry.storage.capacity + " " + entry.storage.unit,
+                entry.graphic,
+                entry.battery.hrs + "hrs " + entry.battery.min + "min",
+                entry.weight.value + " " + entry.weight.unit,
+                "" + entry.price.symbol + entry.price.value
+            ]
+
+            displayData.push(displayObj);
+        }
+    }
+
+
+    $('#detailed-table').DataTable(
+        {
+            data: displayData,
+            columns: [
+                { title: "Model Name" },
+                { title: "Processor Name" },
+                { title: "Processor Speed"},
+                { title: "OS"},
+                { title: "RAM"},
+                { title: "Storage"},
+                { title: "Graphic"},
+                { title: "Battery"},
+                { title: "Weight"},
+                { title: "Price"}
+
+            ],
+
+            paging: false
+
+
+        }
+    );
+
+}
+
+function reloadDetailedTable(selectedIds, data) {
+    console.log("reload");
+    var displayData = [];
+    for (var i=0; i<selectedIds.length; i++) {
+        if (selectedIds[i] != "check-all") {
+            var index = parseInt(selectedIds[i]);
+            var entry = data[index];
+            var displayObj = [
+                "<a href=\"" + entry.reviewUrl + "\">" + entry.name + "</a> ",
+                entry.processorName,
+                entry.processorSpeed + " GHz",
+                entry.platform,
+                entry.ram,
+                entry.storage.type + " " + entry.storage.capacity + " " + entry.storage.unit,
+                entry.graphic,
+                entry.battery.hrs + "hrs " + entry.battery.min + "min",
+                entry.weight.value + " " + entry.weight.unit,
+                "" + entry.price.symbol + entry.price.value
+            ]
+
+            displayData.push(displayObj);
+        }
+    }
+
+    console.log("table data: ");
+    console.log(displayData);
+
+    var table = $('#detailed-table').DataTable();
+    table.clear();
+    table.rows.add(displayData);
+    table.draw();
+
 }
 
 function visualizeData(radarChartData) {
@@ -59,46 +150,48 @@ function visualizeData(radarChartData) {
 		    scaleStepWidth: 1,
 		    scaleStartValue: 0
     });
-    //TODO: custom tooltips
-    //Display details of selected laptop in a table
+    //TODO: custom tooltips :)) -> laptop name
+
 }
 
 function redraw(selectedIds, laptops) {
 
 	var labels = ["Processor Speed", "RAM", "Storage", "Price", "Graphics", "Battery", "Weight"];
-	
+
 	var radarChartData = new Object();
 	radarChartData.labels = labels;
 	radarChartData.datasets = [];
 
-	for (var i in selectedIds) {
-		var index = parseInt(selectedIds[i]);
-		console.log("index: " + index);
+    for (var i=0; i<selectedIds.length; i++) {
+        if (selectedIds[i] != "check-all") {
+            var index = parseInt(selectedIds[i]);
+            //console.log("index: " + index);
 
-		selectedLaptop = laptops[index];
-		// calculate Score of selected Laptop
+            selectedLaptop = laptops[index];
+            // calculate Score of selected Laptop
 
-		//create selectedData object
-		selectedData = new Object();
-		selectedData.label = selectedLaptop.name;
-		selectedData.fillColor = getRgbaColor(colors[index], 0.2);
-		selectedData.strokeColor = getRgbaColor(colors[index], 1);
-		selectedData.pointColor = getRgbaColor(colors[index], 1);
-		selectedData.pointStrokeColor = "#fff";
-		selectedData.pointHighlightFill = "fff";
-		selectedData.pointHighlightStroke = getRgbaColor(colors[index], 1);
-		selectedData.data = [
-			getProcessorScore(selectedLaptop.processorSpeed), 
-			getRamScore(selectedLaptop.ram),
-			getStorageScore(selectedLaptop.storage.capacity),
-			getPriceScore(selectedLaptop.price), 
-			getGraphicsScore(selectedLaptop.graphic),
-			getBatteryScore(selectedLaptop.battery),
-			getWeightScore(selectedLaptop.weight)
-		];
-		radarChartData.datasets.push(selectedData);
+            //create selectedData object
+            selectedData = new Object();
+            selectedData.label = selectedLaptop.name;
+            selectedData.fillColor = getRgbaColor(colors[index], 0.2);
+            selectedData.strokeColor = getRgbaColor(colors[index], 1);
+            selectedData.pointColor = getRgbaColor(colors[index], 1);
+            selectedData.pointStrokeColor = "#fff";
+            selectedData.pointHighlightFill = "fff";
+            selectedData.pointHighlightStroke = getRgbaColor(colors[index], 1);
+            selectedData.data = [
+                getProcessorScore(selectedLaptop.processorSpeed),
+                getRamScore(selectedLaptop.ram),
+                getStorageScore(selectedLaptop.storage.capacity),
+                getPriceScore(selectedLaptop.price),
+                getGraphicsScore(selectedLaptop.graphic),
+                getBatteryScore(selectedLaptop.battery),
+                getWeightScore(selectedLaptop.weight)
+            ];
+            radarChartData.datasets.push(selectedData);
 
-	}
+        }
+    }
 
 	if (radarChartData.datasets.length > 0) {
 		visualizeData(radarChartData);
